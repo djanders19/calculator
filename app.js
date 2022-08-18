@@ -1,44 +1,67 @@
 class Model {
-	constructor() {
+    constructor() {
+        this.currValue = '';  // value to display/last value calculated
+        this.lhs = '';  // Left-hand-side of expression
+        this.rhs = '';  // right-hand-side of expression
+        this.op = '+'  // operation to perform on values
+    }
 
-	}
+    /**
+     * @param {string} val
+     */
+    set setlhs(val) {
+        this.lhs = val;
+    }
 
+    /**
+    * @param {string} val
+    */
+    set setrhs(val) {
+        this.rhs = val;
+    }
+
+    /**
+    * @param {string} val
+    */
+    set setop(val) {
+        this.rhs = val;
+    }
 }
 
 class View {
-	constructor() {
-		this.calcBody = document.querySelector(".controls-grid")
+    constructor() {
+        this.calcBody = document.querySelector(".controls-grid")
 
-		// Start by adding the screen:
-		this.screen = document.createElement("div");
-		this.screen.classList.add("screen");
-		this.calcBody.append(this.screen);
+        // Start by adding the screen:
+        this.screen = document.createElement("div");
+        this.screen.classList.add("screen");
+        this.calcBody.append(this.screen);
 
-		// Now add all the buttons:
-		this.keys = [['Clear', 'Clear', 'Delete', 'Delete'],
-		['7', '8', '9', '/'],
-		['4', '5', '6', 'X'],
-		['1', '2', '3', '-'],
-		['.', '0', '=', '+']]
+        // Now add all the buttons:
+        this.keys = [['Clear', 'Clear', 'Delete', 'Delete'],
+        ['7', '8', '9', '/'],
+        ['4', '5', '6', 'X'],
+        ['1', '2', '3', '-'],
+        ['.', '0', '=', '+']]
 
-		for (let r = 0; r < 5; r++) {
-			for (let c = 0; c < 4; c++) {
-				let key = document.createElement("button");
-				key.classList.add("key");
-				key.textContent = this.keys[r][c];
-				this.calcBody.append(key);
-			}
-		}
-	}
+        for (let r = 0; r < 5; r++) {
+            for (let c = 0; c < 4; c++) {
+                let key = document.createElement("button");
+                key.classList.add("key");
+                key.textContent = this.keys[r][c];
+                this.calcBody.append(key);
+            }
+        }
+    }
 
 
 }
 
 class Controller {
-	constructor(model, view) {
-		this.model = model;
-		this.view = view;
-	}
+    constructor(model, view) {
+        this.model = model;
+        this.view = view;
+    }
 }
 
 
