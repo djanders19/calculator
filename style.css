@@ -1,0 +1,27 @@
+.container {
+	background-color: blanchedalmond;
+	display: flex;
+	justify-content: center;
+}
+
+.controls-grid {
+	height: 90vh;
+	display: grid;
+	background-color: aquamarine;
+	grid-template-rows: repeat(7, 10fr);
+	grid-template-columns: repeat(4, 10fr);
+	column-gap: 10px;
+	row-gap: 10px;
+	aspect-ratio: 1;
+}
+
+.screen {
+	grid-area: 1 / 1 / 3 / 5;
+	background-color: antiquewhite;
+}
+
+.key {
+	border-radius: 100%;
+	color: gray;
+	border-style: solid;
+}
