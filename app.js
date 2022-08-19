@@ -24,7 +24,28 @@ class Model {
 	* @param {string} val
 	*/
 	set setop(val) {
-		this.rhs = val;
+		this.op = val;
+	}
+
+	/**
+	 * @param {string} val
+	 */
+	get getlhs() {
+		return this.lhs;
+	}
+
+	/**
+	* @param {string} val
+	*/
+	get getrhs() {
+		return this.rhs;
+	}
+
+	/**
+	* @param {string} val
+	*/
+	get getop() {
+		return this.op;
 	}
 
 	eval() {
@@ -91,20 +112,37 @@ class View {
 		// Now add all the buttons:
 		this.keys = [['Clear', 'Clear', 'allClear', 'allClear'],
 		['7', '8', '9', '/'],
-		['4', '5', '6', 'X'],
+		['4', '5', '6', '*'],
 		['1', '2', '3', '-'],
 		['.', '0', '=', '+']]
+
+		this.keyNodes = [];
 
 		for (let r = 0; r < 5; r++) {
 			for (let c = 0; c < 4; c++) {
 				let key = document.createElement("button");
 				key.classList.add("key");
+				this.keyNodes.push(key);
 				key.textContent = this.keys[r][c];
 				this.calcBody.append(key);
 			}
 		}
 	}
 
+	display(val) {
+		this.screen.textContent = val;
+	}
+
+	bindKeys(handler) {
+		for (let i = 0; i < this.keyNodes.length; i++) {
+			let key = this.keyNodes[i];
+			key.addEventListener('click', event => {
+				event.preventDefault();
+
+				handler(key.textContent);
+			})
+		}
+	}
 
 }
 
@@ -113,27 +151,47 @@ class Controller {
 		this.model = model;
 		this.view = view;
 		this.nonNumerics = ["-", "=", "+", "*", "/", "Clear", "allClear"];
+
+		this.view.bindKeys(this.handleKey.bind(this));
 	}
 
 	handleKey(val) {
+		console.log(this);
 		if (this.nonNumerics.includes(val)) {
 			switch (val) {
 				case 'Clear':
 					this.model.clear();
+					this.view.display('');
 					break;
-				case 'Delete':
+				case 'allClear':
 					this.model.allClear();
+					this.view.display('');
 					break;
 				case '=':
 					this.view.display(this.model.eval());
 					break;
 				default:
 					this.model.setop = val;
+					console.log('setting op');
+					this.view.display(this.model.getlhs + ' ' + this.model.getop)
 					break;
+			}
+		} else {
+			if (!this.model.op) {
+				this.model.setlhs = this.model.getlhs + val;
+				console.log(this.model.getlhs);
+				console.log('lhs');
+				this.view.display(this.model.getlhs)
+			} else {
+				this.model.setrhs = this.model.getrhs + val;
+				console.log('rhs');
+				this.view.display(this.model.getlhs + ' ' + this.model.getop + ' ' + this.model.getrhs)
 			}
 		}
 	}
 }
 
+const model = new Model();
+const view = new View();
 
-const app = new Controller(new Model(), new View());
+const app = new Controller(model, view);
