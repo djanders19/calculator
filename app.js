@@ -24,6 +24,7 @@ class Model {
 	* @param {string} val
 	*/
 	set setop(val) {
+		this.checkOp();
 		this.op = val;
 	}
 
@@ -56,18 +57,22 @@ class Model {
 						case '+':
 							this.currValue = parseFloat(this.lhs) + parseFloat(this.rhs);
 							this.lhs = this.currValue;
+							this.rhs = '';
 							return this.currValue;
 						case '-':
 							this.currValue = parseFloat(this.lhs) - parseFloat(this.rhs);
 							this.lhs = this.currValue;
+							this.rhs = '';
 							return this.currValue;
 						case '/':
 							this.currValue = parseFloat(this.lhs) / parseFloat(this.rhs);
 							this.lhs = this.currValue;
+							this.rhs = '';
 							return this.currValue;
 						case '*':
 							this.currValue = parseFloat(this.lhs) * parseFloat(this.rhs);
 							this.lhs = this.currValue;
+							this.rhs = '';
 							return this.currValue;
 						default:
 							throw new Error('Error: unrecognized operation.')
@@ -91,8 +96,11 @@ class Model {
 		this.currValue = '';
 	}
 
-	toString() {
-
+	checkOp() {
+		if (this.op && this.rhs) {
+			this.eval();
+			this.op = '';
+		}
 	}
 }
 
@@ -168,7 +176,6 @@ class Controller {
 					break;
 				default:
 					this.model.setop = val;
-					console.log('setting op');
 					this.view.display(this.model.getlhs + ' ' + this.model.getop)
 					break;
 			}
@@ -176,11 +183,9 @@ class Controller {
 			if (!this.model.op) {
 				this.model.setlhs = this.model.getlhs + val;
 				console.log(this.model.getlhs);
-				console.log('lhs');
 				this.view.display(this.model.getlhs)
 			} else {
 				this.model.setrhs = this.model.getrhs + val;
-				console.log('rhs');
 				this.view.display(this.model.getlhs + ' ' + this.model.getop + ' ' + this.model.getrhs)
 			}
 		}
