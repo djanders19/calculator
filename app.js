@@ -55,22 +55,18 @@ class Model {
 					switch (this.op) {
 						case '+':
 							this.currValue = parseFloat(this.lhs) + parseFloat(this.rhs);
-							this.clear();
 							this.lhs = this.currValue;
 							return this.currValue;
 						case '-':
 							this.currValue = parseFloat(this.lhs) - parseFloat(this.rhs);
-							this.clear();
 							this.lhs = this.currValue;
 							return this.currValue;
 						case '/':
 							this.currValue = parseFloat(this.lhs) / parseFloat(this.rhs);
-							this.clear();
 							this.lhs = this.currValue;
 							return this.currValue;
 						case '*':
 							this.currValue = parseFloat(this.lhs) * parseFloat(this.rhs);
-							this.clear();
 							this.lhs = this.currValue;
 							return this.currValue;
 						default:
