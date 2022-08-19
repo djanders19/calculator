@@ -3,7 +3,7 @@ class Model {
 		this.currValue = '';  // value to display/last value calculated
 		this.lhs = '';  // Left-hand-side of expression
 		this.rhs = '';  // right-hand-side of expression
-		this.op = '+'  // operation to perform on values
+		this.op = ''  // operation to perform on values
 	}
 
 	/**
@@ -34,15 +34,23 @@ class Model {
 					switch (this.op) {
 						case '+':
 							this.currValue = parseFloat(this.lhs) + parseFloat(this.rhs);
+							this.clear();
+							this.lhs = this.currValue;
 							return this.currValue;
 						case '-':
 							this.currValue = parseFloat(this.lhs) - parseFloat(this.rhs);
+							this.clear();
+							this.lhs = this.currValue;
 							return this.currValue;
 						case '/':
 							this.currValue = parseFloat(this.lhs) / parseFloat(this.rhs);
+							this.clear();
+							this.lhs = this.currValue;
 							return this.currValue;
 						case '*':
 							this.currValue = parseFloat(this.lhs) * parseFloat(this.rhs);
+							this.clear();
+							this.lhs = this.currValue;
 							return this.currValue;
 						default:
 							throw new Error('Error: unrecognized operation.')
@@ -65,6 +73,10 @@ class Model {
 		this.clear();
 		this.currValue = '';
 	}
+
+	toString() {
+
+	}
 }
 
 class View {
@@ -77,7 +89,7 @@ class View {
 		this.calcBody.append(this.screen);
 
 		// Now add all the buttons:
-		this.keys = [['Clear', 'Clear', 'Delete', 'Delete'],
+		this.keys = [['Clear', 'Clear', 'allClear', 'allClear'],
 		['7', '8', '9', '/'],
 		['4', '5', '6', 'X'],
 		['1', '2', '3', '-'],
@@ -100,6 +112,26 @@ class Controller {
 	constructor(model, view) {
 		this.model = model;
 		this.view = view;
+		this.nonNumerics = ["-", "=", "+", "*", "/", "Clear", "allClear"];
+	}
+
+	handleKey(val) {
+		if (this.nonNumerics.includes(val)) {
+			switch (val) {
+				case 'Clear':
+					this.model.clear();
+					break;
+				case 'Delete':
+					this.model.allClear();
+					break;
+				case '=':
+					this.view.display(this.model.eval());
+					break;
+				default:
+					this.model.setop = val;
+					break;
+			}
+		}
 	}
 }
 
