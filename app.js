@@ -69,7 +69,7 @@ class Model {
 							this.lhs = this.currValue;
 							this.rhs = '';
 							return this.currValue;
-						case '*':
+						case 'x':
 							this.currValue = parseFloat(this.lhs) * parseFloat(this.rhs);
 							this.lhs = this.currValue;
 							this.rhs = '';
@@ -114,9 +114,9 @@ class View {
 		this.calcBody.append(this.screen);
 
 		// Now add all the buttons:
-		this.keys = [['Clear', 'Clear', 'allClear', 'allClear'],
+		this.keys = [['Clear', 'Clear', 'AC', 'AC'],
 		['7', '8', '9', '/'],
-		['4', '5', '6', '*'],
+		['4', '5', '6', 'x'],
 		['1', '2', '3', '-'],
 		['.', '0', '=', '+']]
 
@@ -154,7 +154,7 @@ class Controller {
 	constructor(model, view) {
 		this.model = model;
 		this.view = view;
-		this.nonNumerics = ["-", "=", "+", "*", "/", "Clear", "allClear"];
+		this.nonNumerics = ["-", "=", "+", "x", "/", "Clear", "AC"];
 
 		this.view.bindKeys(this.handleKey.bind(this));
 	}
@@ -167,7 +167,7 @@ class Controller {
 					this.model.clear();
 					this.view.display('');
 					break;
-				case 'allClear':
+				case 'AC':
 					this.model.allClear();
 					this.view.display('');
 					break;
