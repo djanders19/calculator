@@ -65,6 +65,9 @@ class Model {
 							this.#evalHelper();
 							return this.currValue;
 						case '/':
+							if (this.rhs == 0) {
+								return "#ERR";
+							}
 							this.currValue = parseFloat(this.lhs) / parseFloat(this.rhs);
 							this.#evalHelper()
 							return this.currValue;
