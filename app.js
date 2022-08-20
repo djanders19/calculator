@@ -1,9 +1,9 @@
 class Model {
 	constructor() {
-		this.currValue = '';  // value to display/last value calculated
-		this.lhs = '';  // Left-hand-side of expression
-		this.rhs = '';  // right-hand-side of expression
-		this.op = ''  // operation to perform on values
+		this.currValue = "";  // value to display/last value calculated
+		this.lhs = "";  // Left-hand-side of expression
+		this.rhs = "";  // right-hand-side of expression
+		this.op = ""  // operation to perform on values
 		this.opSet = false
 	}
 
@@ -56,57 +56,67 @@ class Model {
 			if (this.rhs) {
 				if (this.op) {
 					switch (this.op) {
-						case '+':
+						case "+":
 							this.currValue = parseFloat(this.lhs) + parseFloat(this.rhs);
 							this.#evalHelper();
 							return this.currValue;
-						case '-':
+						case "-":
 							this.currValue = parseFloat(this.lhs) - parseFloat(this.rhs);
 							this.#evalHelper();
 							return this.currValue;
-						case '/':
+						case "/":
 							if (this.rhs == 0) {
 								return "#ERR";
 							}
 							this.currValue = parseFloat(this.lhs) / parseFloat(this.rhs);
 							this.#evalHelper()
 							return this.currValue;
-						case 'x':
+						case "x":
 							this.currValue = parseFloat(this.lhs) * parseFloat(this.rhs);
 							this.#evalHelper();
 							return this.currValue;
 						default:
-							throw new Error('Error: unrecognized operation.')
+							throw new Error("Error: unrecognized operation.")
 					}
 				}
-				throw new Error('No op literal!')
+				throw new Error("No op literal!")
 			}
-			throw new Error('No RHS literal!')
+			throw new Error("No RHS literal!")
 		}
-		throw new Error('No LHS literal!')
+		throw new Error("No LHS literal!")
 	}
 
-	clear() {
-		this.rhs = '';
-		this.op = '';
+	delete() {
+		if (this.rhs) {
+			this.rhs = this.rhs.slice(0, -1);
+		} else if (this.op) {
+			this.op = this.op = ""
+		} else {
+			this.lhs = this.lhs.slice(0, -1);
+		}
 	}
 
 	allClear() {
-		this.clear();
-		this.lhs = '';
-		this.currValue = '';
+		this.rhs = "";
+		this.op = "";
+		this.lhs = "";
+		this.currValue = "";
+	}
+
+	toString() {
+		return this.lhs + " " + this.op + " " + this.rhs;
 	}
 
 	#checkOp() {
 		if (this.op && this.rhs) {
 			this.eval();
-			this.op = '';
+			this.op = "";
 		}
 	}
 
 	#evalHelper() {
 		this.lhs = this.currValue;
-		this.rhs = '';
+		this.rhs = "";
 		this.opSet = false;
 	}
 }
@@ -122,14 +132,14 @@ class View {
 
 		// Now add all the buttons:
 		this.keys = [
-			['7', '8', '9', '/'],
-			['4', '5', '6', 'x'],
-			['1', '2', '3', '-'],
-			['.', '0', '=', '+']]
+			["7", "8", "9", "/"],
+			["4", "5", "6", "x"],
+			["1", "2", "3", "-"],
+			[".", "0", "=", "+"]]
 
 		this.keyNodes = [];
 
-		this.wideKeys = ['C', 'AC']
+		this.wideKeys = ["<-", "AC"]
 		for (let c = 0; c < this.wideKeys.length; c++) {
 			let key = document.createElement("button");
 			key.classList.add("wideKey");
@@ -157,7 +167,7 @@ class View {
 	bindKeys(handler) {
 		for (let i = 0; i < this.keyNodes.length; i++) {
 			let key = this.keyNodes[i];
-			key.addEventListener('click', event => {
+			key.addEventListener("click", event => {
 				event.preventDefault();
 
 				handler(key.textContent);
@@ -175,7 +185,7 @@ class Controller {
 	constructor(model, view) {
 		this.model = model;
 		this.view = view;
-		this.nonNumerics = ["-", "=", "+", "x", "/", "C", "AC"];
+		this.nonNumerics = ["-", "=", "+", "x", "/", "<-", "AC"];
 
 		this.view.bindKeys(this.handleKey.bind(this));
 	}
@@ -184,20 +194,20 @@ class Controller {
 		console.log(this);
 		if (this.nonNumerics.includes(val)) {
 			switch (val) {
-				case 'C':
-					this.model.clear();
-					this.view.display('');
+				case "<-":
+					this.model.delete();
+					this.view.display(this.model.toString());
 					break;
-				case 'AC':
+				case "AC":
 					this.model.allClear();
-					this.view.display('');
+					this.view.display("");
 					break;
-				case '=':
+				case "=":
 					this.view.display(this.model.eval());
 					break;
 				default:
 					this.model.setop = val;
-					this.view.display(this.model.getlhs + ' ' + this.model.getop)
+					this.view.display(this.model.getlhs + " " + this.model.getop)
 					break;
 			}
 		} else {
@@ -218,7 +228,7 @@ class Controller {
 			} else {
 				// put input in rhs of expression
 				this.model.setrhs = this.model.getrhs + val;
-				this.view.display(this.model.getlhs + ' ' + this.model.getop + ' '
+				this.view.display(this.model.getlhs + " " + this.model.getop + " "
 					+ this.model.getrhs)
 			}
 		}
