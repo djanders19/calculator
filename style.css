@@ -38,10 +38,6 @@ html {
 
 .wideKey {
 	grid-column: span 2;
-	font-size: x-large;
-	border-radius: 10%;
-	background-color: #9CB4CC;
-	border: 5px solid black;
 }
 
 .key {
@@ -49,4 +45,12 @@ html {
 	border-radius: 10%;
 	background-color: #9CB4CC;
 	border: 5px solid black;
+}
+
+.key:hover {
+	background-color: #c5e0fb;
+}
+
+.key:active {
+	background-color: #8ea1b4;
 }

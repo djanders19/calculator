@@ -142,7 +142,7 @@ class View {
 		this.wideKeys = ["<-", "AC"]
 		for (let c = 0; c < this.wideKeys.length; c++) {
 			let key = document.createElement("button");
-			key.classList.add("wideKey");
+			key.classList.add("wideKey", "key");
 			this.keyNodes.push(key);
 			key.textContent = this.wideKeys[c];
 			this.calcBody.append(key);
