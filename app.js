@@ -4,6 +4,7 @@ class Model {
 		this.lhs = '';  // Left-hand-side of expression
 		this.rhs = '';  // right-hand-side of expression
 		this.op = ''  // operation to perform on values
+		this.opSet = false
 	}
 
 	/**
@@ -24,8 +25,9 @@ class Model {
 	* @param {string} val
 	*/
 	set setop(val) {
-		this.checkOp();
+		this.#checkOp();
 		this.op = val;
+		this.opSet = true;
 	}
 
 	/**
@@ -56,23 +58,19 @@ class Model {
 					switch (this.op) {
 						case '+':
 							this.currValue = parseFloat(this.lhs) + parseFloat(this.rhs);
-							this.lhs = this.currValue;
-							this.rhs = '';
+							this.#evalHelper();
 							return this.currValue;
 						case '-':
 							this.currValue = parseFloat(this.lhs) - parseFloat(this.rhs);
-							this.lhs = this.currValue;
-							this.rhs = '';
+							this.#evalHelper();
 							return this.currValue;
 						case '/':
 							this.currValue = parseFloat(this.lhs) / parseFloat(this.rhs);
-							this.lhs = this.currValue;
-							this.rhs = '';
+							this.#evalHelper()
 							return this.currValue;
 						case 'x':
 							this.currValue = parseFloat(this.lhs) * parseFloat(this.rhs);
-							this.lhs = this.currValue;
-							this.rhs = '';
+							this.#evalHelper();
 							return this.currValue;
 						default:
 							throw new Error('Error: unrecognized operation.')
@@ -86,21 +84,27 @@ class Model {
 	}
 
 	clear() {
-		this.lhs = '';
 		this.rhs = '';
 		this.op = '';
 	}
 
 	allClear() {
 		this.clear();
+		this.lhs = '';
 		this.currValue = '';
 	}
 
-	checkOp() {
+	#checkOp() {
 		if (this.op && this.rhs) {
 			this.eval();
 			this.op = '';
 		}
+	}
+
+	#evalHelper() {
+		this.lhs = this.currValue;
+		this.rhs = '';
+		this.opSet = false;
 	}
 }
 
@@ -114,16 +118,26 @@ class View {
 		this.calcBody.append(this.screen);
 
 		// Now add all the buttons:
-		this.keys = [['Clear', 'Clear', 'AC', 'AC'],
-		['7', '8', '9', '/'],
-		['4', '5', '6', 'x'],
-		['1', '2', '3', '-'],
-		['.', '0', '=', '+']]
+		this.keys = [
+			['7', '8', '9', '/'],
+			['4', '5', '6', 'x'],
+			['1', '2', '3', '-'],
+			['.', '0', '=', '+']]
 
 		this.keyNodes = [];
 
-		for (let r = 0; r < 5; r++) {
-			for (let c = 0; c < 4; c++) {
+		this.wideKeys = ['C', 'AC']
+		for (let c = 0; c < this.wideKeys.length; c++) {
+			let key = document.createElement("button");
+			key.classList.add("wideKey");
+			this.keyNodes.push(key);
+			key.textContent = this.wideKeys[c];
+			this.calcBody.append(key);
+		}
+
+
+		for (let r = 0; r < this.keys.length; r++) {
+			for (let c = 0; c < this.keys[0].length; c++) {
 				let key = document.createElement("button");
 				key.classList.add("key");
 				this.keyNodes.push(key);
@@ -148,13 +162,17 @@ class View {
 		}
 	}
 
+	#createKey() {
+
+	}
+
 }
 
 class Controller {
 	constructor(model, view) {
 		this.model = model;
 		this.view = view;
-		this.nonNumerics = ["-", "=", "+", "x", "/", "Clear", "AC"];
+		this.nonNumerics = ["-", "=", "+", "x", "/", "C", "AC"];
 
 		this.view.bindKeys(this.handleKey.bind(this));
 	}
@@ -163,7 +181,7 @@ class Controller {
 		console.log(this);
 		if (this.nonNumerics.includes(val)) {
 			switch (val) {
-				case 'Clear':
+				case 'C':
 					this.model.clear();
 					this.view.display('');
 					break;
@@ -180,13 +198,25 @@ class Controller {
 					break;
 			}
 		} else {
+			// The logic below basically just checks where we are in the expression
+			// and then sets the view/model accordingly. This should probably be
+			// decoupled to the model and just accessed by overriding the toString of
+			// the model and accessing that or something:
 			if (!this.model.op) {
+				// put input in lhs of literal
 				this.model.setlhs = this.model.getlhs + val;
-				console.log(this.model.getlhs);
+				this.view.display(this.model.getlhs)
+			} else if (!model.opSet) {
+				// if we already have a value stored and enter a number, override that
+				// value and start a new expression
+				model.allClear();
+				this.model.setlhs = this.model.getlhs + val;
 				this.view.display(this.model.getlhs)
 			} else {
+				// put input in rhs of expression
 				this.model.setrhs = this.model.getrhs + val;
-				this.view.display(this.model.getlhs + ' ' + this.model.getop + ' ' + this.model.getrhs)
+				this.view.display(this.model.getlhs + ' ' + this.model.getop + ' '
+					+ this.model.getrhs)
 			}
 		}
 	}
@@ -194,5 +224,4 @@ class Controller {
 
 const model = new Model();
 const view = new View();
-
 const app = new Controller(model, view);

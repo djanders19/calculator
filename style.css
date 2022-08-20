@@ -36,6 +36,14 @@ html {
 	border: 5px solid black;
 }
 
+.wideKey {
+	grid-column: span 2;
+	font-size: x-large;
+	border-radius: 10%;
+	background-color: #9CB4CC;
+	border: 5px solid black;
+}
+
 .key {
 	font-size: x-large;
 	border-radius: 10%;
